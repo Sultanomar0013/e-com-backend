@@ -5,9 +5,11 @@ module.exports = async function(req, res, next){
     if (!token) return res.status(401).send('Access denied! No token Provided');
     //Bearer 12345abcd
     else token = token.split(" ")[1].trim();
-    const decoded = await jwt.verify(token,process.env.JWT_SECRET_KEY);
-    //decoded => undefined
-    if(!decoded) return res.status(400).send('Invalid token');
-    req.user = decoded;
-    next();
+    try{
+        const decoded = await jwt.verify(token,process.env.JWT_SECRET_KEY);
+        req.user = decoded;
+        next();
+    }catch(err){
+        return res.status(400).send('Invalid token');
+    } 
 }
