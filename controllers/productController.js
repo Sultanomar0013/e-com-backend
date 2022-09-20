@@ -16,16 +16,16 @@ module.exports.createProduct = async(req, res) =>{
         const product = new Product(fields);
 
         if(files.photo){
-            fs.readFile(files.photo.path, (err, data)=>{
+            fs.readFile(files.photo.filepath, (err, data)=>{
                 if(err) return res.status(400).send("Problem in file data!");
                 product.photo.data = data;
-                product.photo.contentType = files.photo.type;
+                product.photo.contentType = files.photo.mimetype;
                 product.save((err, result)=>{
                     if(err) res.status(500).send("Internal Server Err!");
                     else return res.status(201).send({
                         message:"Product Created Successfully!",
                         data: _.pick(result,["name", "description", 
-                        "price", "category", "quantity"])
+                        "price", "category", "quantity"]),
                     })
                 })
             })
