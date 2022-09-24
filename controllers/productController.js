@@ -98,5 +98,26 @@ module.exports.updateProductById  = async (req, res) =>{
             })
         }
     })
+}
+//Filter by any fields
+const body ={
+    order:'desc',
+    sortBy:'price',
+    limit:6,
+    skip:20
+}
 
+module.exports.filterProducts = async (req, res)=>{
+    let order = req.body.order ==='desc' ?-1 : 1;
+    let sortBy = req.body.sortBy ? req.query.sortBy : '_id';
+    let limit=req.body.limit ? parseInt(req.query.limit) :10;
+    let skip = parsenInt(req.body.skip);
+
+    const products= await Product.find()
+    .select({ photo:0 })
+    .populate('category', 'name')
+    .sort({ [sortBy]: order})
+    .skip(skip)
+    .limit(limit)
+    return res.status(200).send(products);
 }
